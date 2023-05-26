@@ -11,8 +11,6 @@ load_dotenv()  # Load environment variables from .env file
 mongo_url = str(os.getenv('MONGO_URL'))
 db_name = str(os.getenv('DB_NAME'))
 
-app = Flask(__name__)
-
 # Connect to MongoDB
 client = MongoClient(mongo_url, server_api=ServerApi('1'))
 db = client[db_name]
@@ -23,6 +21,12 @@ try:
     print("Connected to MongoDB")
 except Exception as e:
     print("Failed to connect to MongoDB:", str(e))
+
+# Flask app init
+app = Flask(__name__)
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 @app.route('/summoners')
