@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from bson import json_util
 from bson.objectid import ObjectId
 import os
+from flask_cors import CORS, cross_origin
 
+app = Flask(__name__)
+cors = CORS(app)
 load_dotenv()  # Load environment variables from .env file
 # Read MongoDB environment variables
 mongo_url = str(os.getenv('MONGO_URL'))
@@ -30,6 +33,7 @@ if __name__ == "__main__":
 
 
 @app.route('/summoners')
+@cross_origin()
 def get_summoners():
 
     # Select a collection
@@ -55,6 +59,7 @@ def get_summoners():
     return json_util.dumps(documents_list)
 
 @app.route('/summoner-names')
+@cross_origin()
 def get_summoner_names():
     # Select a collection
     collection = db['summoners']
@@ -65,7 +70,7 @@ def get_summoner_names():
     # Convert documents to a list and rename ids
     documents_list = []
     for doc in documents:
-        temp = {'id': str(doc['_id']), 'summoner': doc['summoner']}
+        temp = {'id': str(doc['_id']), 'summoner': doc['summoner'], 'summoner_id': doc['summoner_id']}
         documents_list.append(temp)
 
     # Return the documents as JSON
@@ -73,6 +78,7 @@ def get_summoner_names():
 
 
 @app.route('/register/<summoner_name>', methods=['POST'])
+@cross_origin()
 def register_summoner(summoner_name):
     # Select a collection
     collection = db['summoners']
@@ -84,19 +90,28 @@ def register_summoner(summoner_name):
 
 
 @app.route('/update/<oid>', methods=['POST'])
+@cross_origin()
 def update_summoner(oid):
     # Select a collection
     collection = db['summoners']
     object_id = ObjectId(oid)
     payload = request.json
     try:
-        update_query = {'$set': {'tier': payload.get('tier', 'N/A'),
-                                 'lp': payload.get('lp', 0),
-                                 'wins': payload.get('wins', 0),
-                                 'losses': payload.get('losses', 0),
+        update_query = {'$set': {'tier': payload.get('tier', ''),
+                                 'icon_url': payload.get('icon_url', ''),
+                                 'level': payload.get('level', 0),
+                                 'summoner_id': payload.get('summoner_id', ''),
+                                 'division': payload.get('division', 0),
+                                 'lp': payload.get('lp', 'ERROR'),
+                                 'tier_image_url': payload.get('tier_image_url', ''),
+                                 'border_image_url': payload.get('border_image_url', ''),
+                                 'win': payload.get('win', 0),
+                                 'lose': payload.get('lose', 0),
                                  'games': payload.get('games', 0),
-                                 'winrate': payload.get('winrate', 0),
-                                 'status': payload.get('status', 'ERROR')
+                                 'is_hot_streak': payload.get('is_hot_streak', False),
+                                 'series': payload.get('series', False),
+                                 'last_updated_at': payload.get('last_updated_at', 0),
+                                 'status': payload.get('status', 'ERROR'),
                                  }
                         }
         collection.update_one({'_id': object_id}, update_query)

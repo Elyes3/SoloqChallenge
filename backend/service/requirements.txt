@@ -3,3 +3,4 @@ pymongo
 requests
 requests-html
 python-dotenv
+flask_cors
