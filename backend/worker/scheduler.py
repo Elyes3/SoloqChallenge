@@ -15,7 +15,7 @@ api_url = str(os.getenv('API_URL'))
 def fetch_summoners():
     print("fetching summoners")
     try:
-        res = requests.Session().get(url=api_url+"/summoner-names")
+        res = requests.Session().get(url=api_url + "/summoner-names")
         res.raise_for_status()
         json = res.json()
         return json
@@ -33,14 +33,23 @@ def update_summoner(id, data):
         print("Failed to update summoner")
 
 
+def op_gg_renew(summoner_id):
+    try:
+        requests.Session().post(url="https://www.op.gg/api/v1.0/internal/bypass/summoners/euw/"
+                                    f"{summoner_id}/renewal")
+    except HTTPError:
+        print("Error while sending renewal request")
+
+
 def update_all_summoners():
-    #fetch all summoners
+    # fetch all summoners
     players = fetch_summoners()
-    #run the opgg worker
+    # run the op.gg worker
     for player in players:
+        # renew the op.gg data
+        op_gg_renew(player[''])
         data = opgg_worker.run(player['summoner'])
-        print(data)
-        #update the data in the db
+        # update the data in the db
         update_summoner(player['id'], data)
 
 
