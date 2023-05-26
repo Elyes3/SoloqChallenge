@@ -1,7 +1,8 @@
 <template>
   <v-container fluid fill-height>
-    <div class="rounded p-5">
-    <v-table class="bg-db">
+    <div class="rounded p-5" v-if="summoners.length > 0">
+    
+      <v-table class="bg-db">
 
     <thead>
       <tr>
@@ -25,33 +26,34 @@
     <tbody>
       <tr
         v-for="summoner in summoners"
-        :key="summoner.name"
+        :key="summoner.summoner_id"
       >
-        <td class="align-center text-white font-weight-bold "><div class="d-flex align-center"><img height="30" width="30" :src=summoner.icon class="rounded-img">&nbsp;<p>{{ summoner.name }}</p></div></td>
+        <td class="align-center text-white font-weight-bold "><div class="d-flex align-center"><img v-if="summoner && summoner.icon_url" height="30" width="30" :src=summoner.icon_url class="rounded-img">&nbsp;<p>{{ summoner && summoner.summoner ? summoner.summoner : "UNKNOWN" }}</p></div></td>
         <td><div class="d-flex">
-            <v-progress-linear :color="generateHexColor(Math.round(summoner.wins*100/(summoner.losses+summoner.wins)))" :model-value="Math.round(summoner.wins*100/(summoner.losses+summoner.wins))" :height="19">
-              <strong class="text-white">{{ Math.round(summoner.wins*100/(summoner.losses+summoner.wins)) }}%</strong>
+            <v-progress-linear :color="summoner && summoner.win && summoner.lose ? generateHexColor(Math.round(summoner.win*100/(summoner.win + summoner.lose))) : 0" :model-value="summoner && summoner.win && summoner.lose ? Math.round(summoner.win*100/(summoner.win + summoner.lose)) : 0" :height="19">
+              <strong class="text-white">{{summoner && summoner.win && summoner.lose ? Math.round(summoner.win*100/(summoner.win + summoner.lose)) : 0}}%</strong>
             </v-progress-linear>
           </div>
       </td>
         <td>
         <div class="flex-gap-1">
-          <div v-for="(icon,id) in summoner.mostPlayed" :key="id">
-            <img class="rounded-img" :src="'http://ddragon.leagueoflegends.com/cdn/13.10.1/img/champion/'+ icon +'.png'" width="30" height="30"/>
+          <div>
+           <p class="text-white font-weight-bold">WAITING FOR MOST PLAYED</p>
           </div>
         </div>
       </td>
         <td>
           <div class="text-white font-weight-bold d-flex justify-center align-center">
-            <img :src="'/tier/'+getTier(summoner.tier)+'.webp'" class="tier" width="40" height="40">&nbsp; {{ summoner.tier }}
+            <img v-if="summoner && summoner.tier" :src="summoner.tier_image_url" class="tier" width="40" height="40">&nbsp; {{ summoner && summoner.tier ? summoner.tier : "" }}&nbsp;{{ summoner && summoner.tier ?  summoner.division : "" }}
           </div>
         </td>
-        <td><div :class="(summoner.KDA < 2 ? 'text-red' : summoner.KDA < 3 ? 'text-gray' : summoner.KDA < 4 ? 'text-green' : 'text-blue') + ' d-flex justify-center align-center'">
-            <span class="font-weight-bold">{{ summoner.KDA }}</span>
-        </div></td>
+        <td class="text-center text-white font-weight-bold">KDA</td>
       </tr>
     </tbody>
   </v-table>  
+</div>
+<div v-else class="w-100">
+  <v-skeleton-loader color="#2f2f4d" :elevation="24"></v-skeleton-loader>
 </div>
 </v-container>
 
@@ -148,10 +150,14 @@ td{
 </style>
 
 <script>
+import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 export default{
   name: 'HelloWorld',
+  components:{
+    VSkeletonLoader
+  },
   data: () => ({
-    summoners:[
+    summoners1:[
       {
         name : "OBG Thanagor",
         icon : "https://ddragon.leagueoflegends.com/cdn/13.10.1/img/profileicon/1.png",
@@ -190,6 +196,7 @@ export default{
       }
     ],
       }),
+
   methods :{
    generateHexColor(scaleValue) {
   // Interpolate RGB values based on the scale
@@ -215,6 +222,13 @@ export default{
   getTier(tier){
     return tier.split(' ')[0];
   }
+  },
+  props:{
+    summoners:
+    {
+      type : Array,
+      required : true,
+    },
   },
   mounted(){
     

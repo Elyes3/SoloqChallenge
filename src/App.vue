@@ -3,7 +3,7 @@
   <v-app class="min-h-100">
     <NavbarComponent></NavbarComponent>
     <CardComponent :text="text"></CardComponent>
-    <HelloWorld/>
+    <HelloWorld :summoners="$store.getters.getSummoners"/>
   </v-app>
 </template>
 
@@ -25,6 +25,11 @@ export default{
     },
   }
 },
+  computed:{
+    getSummoners(){
+      return this.$store.getters.getSummoners
+    }
+  },
   methods:{
     setSummoners(){
       return this.$store.dispatch('fetchSummoners')

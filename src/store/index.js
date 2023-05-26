@@ -2,9 +2,10 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 export default createStore({
   state: {
-    summoners : null,
+    summoners : [],
   },
   getters: {
+    getSummoners:(state) => state.summoners,
   },
   mutations: {
     setSummoners(state,value){
@@ -15,11 +16,10 @@ export default createStore({
     fetchSummoners(state){
       axios({
         method :'get',
-        url:'https://soloqchallengebackend.onrender.com/summoners'
+        url:'http://127.0.0.1:5000/summoners'
       }).then(
-        response =>{
-
-          state.setSummoners(state,response.data);
+         response =>{   
+          state.commit('setSummoners',response.data);
         }
       )
     }
