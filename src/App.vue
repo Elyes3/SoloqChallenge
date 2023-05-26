@@ -1,30 +1,43 @@
+
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <v-app class="min-h-100">
+    <NavbarComponent></NavbarComponent>
+    <CardComponent :text="text"></CardComponent>
+    <HelloWorld/>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import NavbarComponent from './components/NavbarComponent.vue'
+import HelloWorld from './components/HelloWorld.vue';
+import CardComponent from './components/CardComponent.vue';
+export default{
 
-nav {
-  padding: 30px;
-}
+  name: 'App',
+  components:{
+    NavbarComponent,HelloWorld,CardComponent
+  },
+  data(){
+    return{
+    text:{
+      title : "SoloQ Challenge",
+      p : "Tunisian players join an infernal fight in a soloQ climb full of surprises ! Check the ladder for more !"
+    },
+  }
+},
+  methods:{
+    setSummoners(){
+      return this.$store.dispatch('fetchSummoners')
+    },
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+  },
+  mounted(){
+    this.$store.dispatch('fetchSummoners')
+  }
 }
-
-nav a.router-link-exact-active {
-  color: #42b983;
+</script>
+<style scoped>
+.min-h-100{
+  min-height: 90vh;
 }
 </style>
