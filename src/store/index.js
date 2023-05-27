@@ -16,7 +16,7 @@ export default createStore({
     fetchSummoners(state){
       axios({
         method :'get',
-        url:'http://soloqchallengebackend.onrender.com/summoners'
+        url:'https://soloqchallengebackend.onrender.com/summoners'
       }).then(
          response =>{   
           state.commit('setSummoners',response.data);
