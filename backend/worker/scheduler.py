@@ -1,7 +1,5 @@
 import time
-
 from requests import HTTPError
-
 import opgg_worker
 import schedule
 import os
@@ -44,20 +42,22 @@ def op_gg_renew(summoner_id):
 def update_all_summoners():
     # fetch all summoners
     players = fetch_summoners()
-    # run the op.gg worker
+    # renew all players data
     for player in players:
         # renew the op.gg data
-        op_gg_renew(player[''])
+        op_gg_renew(player['summoner_id'])
+
+    # wait for op.gg servers to renew the data
+    time.sleep(5)
+
+    for player in players:
         data = opgg_worker.run(player['summoner'])
         # update the data in the db
         update_summoner(player['id'], data)
 
 
-
-
 # Update all summoners every 30mins
 schedule.every(30).minutes.do(update_all_summoners)
-
 
 # Loop so that the scheduling task
 # keeps on running all time.

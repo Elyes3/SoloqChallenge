@@ -1,5 +1,5 @@
 beautifulsoup4==4.10.0
-python-dotenv==1.0.0
+python-dotenv
 Requests==2.31.0
 requests_html==0.10.0
 schedule==1.2.0
