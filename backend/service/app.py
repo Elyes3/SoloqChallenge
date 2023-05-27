@@ -45,18 +45,19 @@ def get_summoners():
     # Convert documents to a list and rename ids
     documents_list = []
     for doc in documents:
-        temp = {}
-        temp['id'] = str(doc['_id'])
-        if not doc['status']:
+        temp = {'id': str(doc['_id'])}
+        status = doc.get('status', False)
+        if not status or status == "NOT_FOUND":
             continue
-        if doc['status'] == 'OK':
+        if status == 'OK':
             temp = doc
             temp.pop("_id")
-        if doc['status'] == 'PENDING':
+        if status == 'PENDING':
             temp = {'id': str(doc['_id']), 'summoner': doc['summoner'], 'status': 'PENDING'}
         documents_list.append(temp)
     # Return the documents as JSON
     return json_util.dumps(documents_list)
+
 
 @app.route('/summoner-names')
 @cross_origin()
