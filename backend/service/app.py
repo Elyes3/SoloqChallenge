@@ -40,7 +40,7 @@ def get_challenge_details():
     collection = db['challenge']
 
     # Fetch documents from the collection
-    details = collection.find_one()
+    details = collection.find_one({}, {'_id': False})
     return json_util.dumps(details)
 
 

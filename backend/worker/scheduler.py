@@ -1,6 +1,6 @@
 import time
 import opgg_stats_worker
-import op_gg_history_worker
+import opgg_history_worker
 import schedule
 import os
 import requests
