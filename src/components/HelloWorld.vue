@@ -30,40 +30,40 @@
       <tr
         v-for="summoner in summoners"
         :key="summoner.summoner_id"
-        class="position-relative"
+        id="row"
       >
       
-        <td class="align-center text-white font-weight-bold">
+        <td  class="align-center text-white font-weight-bold" id="td1">
           <div class="d-flex align-center">
             <img v-if="summoner && summoner.icon_url" height="30" width="30" :src=summoner.icon_url class="rounded-img">
             <img v-else height="30" width="30" src="https://opgg-static.akamaized.net/meta/images/profile_icons/profileIcon1.jpg" class="rounded-img" >
             &nbsp;&nbsp;<p>{{ summoner && summoner.summoner ? summoner.summoner : "UNKNOWN" }}</p>
-            <v-chip v-if="summoner.status === 'PENDING'"
-      class="ma-2"
-      color="light-blue">Pending</v-chip>
+            <v-chip v-if="summoner.status === 'PENDING'" variant="elevated"
+      class="ma-2 position-sm-absolute font-weight-bold text-uppercase" :style="'left :' + (parseInt(this.rowHeight) - parseInt(this.td1Height))/1.46 + 'px;'"
+      color="#121327">Pending</v-chip>
             <v-icon v-if="summoner && summoner.is_hot_streak && summoner.is_hot_streak == true" size="20" color="orange" icon="mdi-fire"></v-icon>
           </div>
         </td>
-        <td>
+        <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
           <div :class='summoner.status === "PENDING" ? "blureffect d-flex" : "d-flex"'>
             <v-progress-linear :color="summoner && summoner.win && summoner.lose ? generateHexColor(Math.round(summoner.win*100/(summoner.win + summoner.lose))) : generateHexColor(getRandomInt)" :model-value="summoner && summoner.win && summoner.lose ? Math.round(summoner.win*100/(summoner.win + summoner.lose)) : getRandomInt" :height="19">
               <strong class="text-white">{{summoner && summoner.win && summoner.lose ? Math.round(summoner.win*100/(summoner.win + summoner.lose)) : getRandomInt }}%</strong>
             </v-progress-linear>
           </div>
       </td>
-        <td>
+        <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
         <div class="flex-gap-1">
           <div :class='summoner.status === "PENDING" ? "blureffect" : ""'>
            <p class="text-white font-weight-bold">WAITING FOR MOST PLAYED</p>
           </div>
         </div>
       </td>
-        <td>
+        <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
           <div :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-white font-weight-bold d-flex justify-center align-center'">
             <img v-if="summoner && summoner.tier" :src="summoner.tier_image_url" class="tier" width="40" height="40"><img v-else class="tier" width="40" height="40" :src='`https://opgg-static.akamaized.net/images/medals_new/`+Tiers[tierRandom]+".png"'>&nbsp; {{ summoner && summoner.tier ? summoner.tier : Tiers[tierRandom].toUpperCase()  }}&nbsp;{{ summoner && summoner.tier ?  summoner.division : Math.floor(Math.random() * 4) + 1 }}
           </div>
         </td>
-        <td>
+        <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
           <div :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-white font-weight-bold text-center'">{{summoner && summoner.lp ? summoner.lp : 0 }}&nbsp;LP 
           <div class="d-flex justify-center items-center g-3" v-if="summoner && summoner.series"> 
             <span v-for="(serie,id) in summoner.series" :key="id" :class="(serie == 'W' ? 'blue-bg' : 'red-bg') + '  rounded-full wh-10 d-inline-block'">
@@ -72,7 +72,7 @@
           </div>
         </div>
         </td>
-        <td :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-center text-white font-weight-bold'">{{(Math.random() *6).toFixed(2) }}</td>
+        <td :class="(summoner.status === 'PENDING' ? 'pending' : '') + ' text-center text-white font-weight-bold'"><div :class="summoner.status === 'PENDING' ? 'blureffect' : ''">{{(Math.random() *6).toFixed(2) }}</div></td>
       </tr>
     </tbody>
   </v-table>
@@ -97,6 +97,17 @@
     height:30px;
   }
 
+}
+@media only screen and (min-width: 690px) {
+.position-sm-absolute{
+  position:absolute;
+}
+}
+@media only screen and (max-width: 690px) {
+.position-sm-absolute{
+  position:initial;
+  font-size:0.5rem;
+}
 }
 @media only screen and (max-width: 690px) {
     * {
@@ -184,6 +195,10 @@ padding-right: 30px !important;
 td{
   width:20%;
 }
+.pending{
+  background: transparent;
+  background-color: #1c1c39ba
+}
 .blureffect{
   -webkit-filter: blur(4px);
     -moz-filter: blur(4px);
@@ -200,7 +215,9 @@ export default{
     VSkeletonLoader
   },
   data: () => ({
-    Tiers : ['iron','bronze','silver','gold','platinum','diamond']
+    Tiers : ['iron','bronze','silver','gold','platinum','diamond'],
+    rowHeight : 0,
+    td1Height: 0,
       }),
   computed:{
     getRandomInt(){
@@ -211,6 +228,14 @@ export default{
     }
   },
   methods :{
+    onWidthChange(newWidth) {
+      console.log("row:",newWidth)
+      this.rowHeight = newWidth;
+    },
+    onWidthChange1(newWidth) {
+      console.log("td1:",newWidth)
+      this.td1Height = newWidth;
+    },
    generateHexColor(scaleValue) {
   // Interpolate RGB values based on the scale
   var red, green, blue;
@@ -235,11 +260,8 @@ export default{
   getTier(tier){
     return tier.split(' ')[0];
   },
-  onWidthChange(newWidth) {
-      // Handle the width change here
-      console.log('New width:', newWidth);
-    }
-  },
+
+},
   props:{
     summoners:
     {
@@ -247,7 +269,25 @@ export default{
       required : true,
     },
   },
-  mounted(){
+  updated(){
+  const element = document.getElementById('row');
+  const element1 = document.getElementById('td1');  
+// Create a ResizeObserver to monitor width changes
+const observer = new ResizeObserver(entries => {
+  for (const entry of entries) {
+    const newWidth = entry.contentRect.width;
+
+    // Call a method or update a data property with the new width
+    if(entry.target.id == 'row')
+    this.onWidthChange(newWidth);
+    else
+    this.onWidthChange1(newWidth);
+  }
+});
+
+// Start observing the element
+observer.observe(element);
+observer.observe(element1)
 
   }    
   }
