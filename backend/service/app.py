@@ -32,6 +32,18 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
+@app.route('/challenge')
+@cross_origin()
+def get_challenge_details():
+
+    # Select a collection
+    collection = db['challenge']
+
+    # Fetch documents from the collection
+    details = collection.find_one()
+    return json_util.dumps(details)
+
+
 @app.route('/summoners')
 @cross_origin()
 def get_summoners():

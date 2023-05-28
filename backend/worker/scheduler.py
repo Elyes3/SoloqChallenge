@@ -1,5 +1,6 @@
 import time
 import opgg_stats_worker
+import op_gg_history_worker
 import schedule
 import os
 import requests
@@ -10,6 +11,19 @@ load_dotenv()  # Load environment variables from .env file\
 api_url = str(os.getenv('API_URL'))
 summoner_update_interval = int(os.getenv('UPDATE_SUMMONERS_EVERY'))
 summoner_renew_wait = int(os.getenv('SUMMONER_RENEW_WAIT'))
+
+
+def fetch_challenge_details():
+    print("fetching challenge details")
+    try:
+        res = requests.Session().get(url=api_url + "/challenge")
+        res.raise_for_status()
+        json = res.json()
+        return json
+    except HTTPError as e:
+        print("Error fetching /challenge")
+        print(e)
+        return {}
 
 
 def fetch_summoners():
@@ -25,13 +39,22 @@ def fetch_summoners():
         return []
 
 
-def update_summoner(id, data):
+def update_summoner(sid, data):
     try:
-        response = requests.Session().post(url=api_url + f"/update/{id}", json=data)
+        response = requests.Session().post(url=api_url + f"/update/{sid}", json=data)
     except HTTPError:
         print("Error posting new data to api")
     if not response.ok:
         print("Failed to update summoner")
+
+
+def update_match_history(sid, data):
+    try:
+        response = requests.Session().post(url=api_url + f"/matches/{sid}", json=data)
+    except HTTPError:
+        print("Error posting new data to api")
+    if not response.ok:
+        print("Failed to update match history")
 
 
 def op_gg_renew(summoner_id):
@@ -50,9 +73,13 @@ def op_gg_renew(summoner_id):
 
 def update_all_summoners():
     print("Summoner profile update started")
+
+    details = fetch_challenge_details()
+
     # fetch all summoners
     players = fetch_summoners()
     print(f"{len(players)} profiles fetched")
+
     # renew all players data
     for player in players:
         # renew the op.gg data
@@ -60,15 +87,18 @@ def update_all_summoners():
     print(f"called  op.gg renew, grace period set to {summoner_renew_wait} minutes")
 
     # wait for op.gg servers to renew the data
-    time.sleep(summoner_renew_wait)
+    time.sleep(60*summoner_renew_wait)
 
     print("grace period ended, fetching op.gg profile data")
-
     for player in players:
         data = opgg_stats_worker.run(player['summoner'])
         # update the data in the db
         update_summoner(player['id'], data)
 
+        games = op_gg_history_worker.run(player['summoner_id'],)
+
+        print(f"{len(games)} games found for player {player['summoner']}")
+        update_match_history(player['id'], games)
     print("Job ended successfully!")
 
 
