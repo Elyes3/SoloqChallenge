@@ -1,9 +1,9 @@
 import time
-from requests import HTTPError
-import opgg_worker
+import opgg_stats_worker
 import schedule
 import os
 import requests
+from requests import HTTPError
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file\
@@ -19,8 +19,9 @@ def fetch_summoners():
         res.raise_for_status()
         json = res.json()
         return json
-    except HTTPError:
+    except HTTPError as e:
         print("Error fetching summoners")
+        print(e)
         return []
 
 
@@ -35,8 +36,14 @@ def update_summoner(id, data):
 
 def op_gg_renew(summoner_id):
     try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/56.0.2924.76 Safari/537.36',
+            "Upgrade-Insecure-Requests": "1", "DNT": "1",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate"}
         requests.Session().post(url="https://www.op.gg/api/v1.0/internal/bypass/summoners/euw/"
-                                    f"{summoner_id}/renewal")
+                                    f"{summoner_id}/renewal", headers=headers)
     except HTTPError:
         print("Error while sending renewal request")
 
@@ -58,7 +65,7 @@ def update_all_summoners():
     print("grace period ended, fetching op.gg profile data")
 
     for player in players:
-        data = opgg_worker.run(player['summoner'])
+        data = opgg_stats_worker.run(player['summoner'])
         # update the data in the db
         update_summoner(player['id'], data)
 
