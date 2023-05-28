@@ -5,6 +5,7 @@ from tabulate import tabulate
 import sys
 import json
 
+
 def run(arg):
     player = arg
 
