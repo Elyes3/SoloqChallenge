@@ -1,6 +1,6 @@
 import time
 import opgg_stats_worker
-import op_gg_history_worker
+import opgg_history_worker
 import schedule
 import os
 import requests
@@ -95,7 +95,7 @@ def update_all_summoners():
         # update the data in the db
         update_summoner(player['id'], data)
 
-        games = op_gg_history_worker.run(player['summoner_id'],)
+        games = opgg_history_worker.run(player['summoner_id'],)
 
         print(f"{len(games)} games found for player {player['summoner']}")
         update_match_history(player['id'], games)
