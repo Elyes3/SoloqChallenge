@@ -6,7 +6,7 @@ from bson import json_util
 from bson.objectid import ObjectId
 import os
 from flask_cors import CORS, cross_origin
-from .helpers import recalculate_stats
+import recalculate_stats
 
 
 app = Flask(__name__)
