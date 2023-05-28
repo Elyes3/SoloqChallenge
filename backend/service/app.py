@@ -6,6 +6,8 @@ from bson import json_util
 from bson.objectid import ObjectId
 import os
 from flask_cors import CORS, cross_origin
+from .helpers import recalculate_stats
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -163,14 +165,22 @@ def post_matches(summoner_id):
     collection = db['matches']
 
     payload = request.json
-    print(payload)
     payload.reverse()
     try:
         for match in payload:
             exists = collection.find_one({'id': match['id']})
             if exists:
-                return "Match already exists", 500
+                continue
+            if match == payload[-1]:
+                # if this is the latest match and it was inserted
+                db['summoner'].update_one({'summoner_id': summoner_id}, {'$set': {
+                    'last_fetched_game': match['id'],
+                    'last_fetched_game_played_at': match['created_at'],
+                }})
+            match['summoner_id'] = summoner_id
             collection.insert_one(match)
+            stats = recalculate_stats(db, summoner_id)
+            db['stats'].update_one({'summoner_id': summoner_id}, {'$set': stats}, upsert=True)
     except Exception as e:
         return "Error", 500
     return "Inserted", 200
