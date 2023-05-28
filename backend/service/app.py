@@ -59,6 +59,29 @@ def get_summoners():
     return json_util.dumps(documents_list)
 
 
+@app.route('/summoner/<summoner_id>')
+@cross_origin()
+def get_summoner(summoner_id):
+
+    # Select a collection
+    collection = db['summoners']
+
+    # Fetch documents from the collection
+    doc = collection.find_one({'summoner_id': summoner_id})
+    temp = {'id': str(doc['_id'])}
+    print(doc)
+    status = doc.get('status', False)
+    if not status or status == "NOT_FOUND":
+        return json_util.dumps({'err': 'summoner not found'})
+    if status == 'OK':
+        temp = doc
+        temp.pop("_id")
+    if status == 'PENDING':
+        temp = {'id': str(doc['_id']), 'summoner': doc['summoner'], 'status': 'PENDING'}
+    # Return the document as JSON
+    return json_util.dumps(temp)
+
+
 @app.route('/summoner-names')
 @cross_origin()
 def get_summoner_names():
@@ -71,7 +94,7 @@ def get_summoner_names():
     # Convert documents to a list and rename ids
     documents_list = []
     for doc in documents:
-        temp = {'id': str(doc['_id']), 'summoner': doc['summoner'], 'summoner_id': doc['summoner_id']}
+        temp = {'id': str(doc['_id']), 'summoner': doc['summoner'], 'summoner_id': doc.get('summoner_id', '')}
         documents_list.append(temp)
 
     # Return the documents as JSON
@@ -116,6 +139,26 @@ def update_summoner(oid):
                                  }
                         }
         collection.update_one({'_id': object_id}, update_query)
+    except Exception as e:
+        return "Error", 500
+    return "Inserted", 200
+
+
+@app.route('/matches/<summoner_id>', methods=['POST'])
+@cross_origin()
+def post_matches(summoner_id):
+    # Select a collection
+    collection = db['matches']
+
+    payload = request.json
+    print(payload)
+    payload.reverse()
+    try:
+        for match in payload:
+            exists = collection.find_one({'id': match['id']})
+            if exists:
+                return "Match already exists", 500
+            collection.insert_one(match)
     except Exception as e:
         return "Error", 500
     return "Inserted", 200
