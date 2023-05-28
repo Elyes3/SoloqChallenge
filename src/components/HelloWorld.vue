@@ -37,8 +37,14 @@
           <div class="d-flex align-center">
             <img v-if="summoner && summoner.icon_url" height="30" width="30" :src=summoner.icon_url class="rounded-img">
             <img v-else height="30" width="30" src="https://opgg-static.akamaized.net/meta/images/profile_icons/profileIcon1.jpg" class="rounded-img" >
-            &nbsp;&nbsp;<p>{{ summoner && summoner.summoner ? summoner.summoner : "UNKNOWN" }}</p>
-            <v-chip v-if="summoner.status === 'PENDING'" variant="elevated"
+            &nbsp;&nbsp;
+            <a :href="'https://euw.op.gg/summoner/username='+summoner.summoner" target="_blank" class="text-decoration-none hv-bl">      
+              <v-tooltip id="tooltip"
+        activator="parent"
+        location="end"
+        
+      ><img width="30" height="30" src="/opgg.png"></v-tooltip>{{ summoner && summoner.summoner ? summoner.summoner : "UNKNOWN" }}</a>
+           <v-chip v-if="summoner.status === 'PENDING'" variant="elevated"
       class="ma-2 position-sm-absolute font-weight-bold text-uppercase" :style="'left :' + (parseInt(this.rowHeight) - parseInt(this.td1Height))/1.46 + 'px;'"
       color="#121327">Pending</v-chip>
             <v-icon v-if="summoner && summoner.is_hot_streak && summoner.is_hot_streak == true" size="20" color="orange" icon="mdi-fire"></v-icon>
@@ -112,6 +118,14 @@ export default{
       console.log("row:",newWidth)
       this.rowHeight = newWidth;
     },
+    toolTipColorChange(){
+      const collection = document.getElementsByClassName('v-overlay__content');
+      console.log(collection);
+      for (let i = 0; i < collection.length; i++) {
+        collection[i].setAttribute('style','background : #181936')
+        console.log(collection[i]);
+    }
+    },
     onWidthChange1(newWidth) {
       console.log("td1:",newWidth)
       this.td1Height = newWidth;
@@ -150,6 +164,7 @@ export default{
     },
   },
   updated(){
+  this.toolTipColorChange();
   const element = document.getElementById('row');
   const element1 = document.getElementById('td1');  
 // Create a ResizeObserver to monitor width changes
@@ -176,6 +191,7 @@ observer.observe(element1)
 .bg-db{
   background: #2f2f4d;
 }
+
 @media only screen and (max-width: 1280px) {
     * {
     font-size:0.65rem;
@@ -298,5 +314,8 @@ td{
 .shadow-1{
     box-shadow: 0px 0px 10px 0px black;
     border-radius:20px;
+}
+.hv-bl:hover{
+color:#2196F3;
 }
 </style>
