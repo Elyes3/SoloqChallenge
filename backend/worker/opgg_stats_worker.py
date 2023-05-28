@@ -1,7 +1,6 @@
 import functools
 from requests_html import HTMLSession
 from bs4 import *
-from tabulate import tabulate
 import sys
 import json
 
@@ -46,9 +45,6 @@ def run(arg):
     except Exception as e:
         print(f"{e}: Error! url='{page}'")
         output['status'] = 'NOT_FOUND'
-
-    print(output)
-
     return output
 
 
