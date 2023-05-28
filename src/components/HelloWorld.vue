@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height>
-    <div class="rounded p-5" v-if="summoners.length > 0">
+    <div class=" rounded-full shadow-1" v-if="summoners.length > 0">
     
       <v-table class="bg-db">
 
@@ -294,5 +294,9 @@ td{
     -o-filter: blur(4px);
     -ms-filter: blur(4px);
     filter: blur(4px);
+}
+.shadow-1{
+    box-shadow: 0px 0px 10px 0px black;
+    border-radius:20px;
 }
 </style>
