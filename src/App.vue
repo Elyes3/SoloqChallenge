@@ -41,8 +41,15 @@ export default{
   }
 }
 </script>
-<style scoped>
+<style>
 .min-h-100{
   min-height: 90vh;
+}
+@font-face { 
+  font-family: MarkPro; 
+	src: url('../public/MarkPro.otf'); } 
+*{
+font-family: 'MarkPro';
+color:white;
 }
 </style>

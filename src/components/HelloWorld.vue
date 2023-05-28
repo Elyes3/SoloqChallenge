@@ -80,9 +80,98 @@
 <div v-else class="w-100">
   <v-skeleton-loader color="#2f2f4d" :elevation="24"></v-skeleton-loader>
 </div>
+<WinrateGraph></WinrateGraph>
 </v-container>
 
 </template>
+<script>
+import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
+import WinrateGraph from './WinrateGraph.vue';
+export default{
+  name: 'HelloWorld',
+  components:{
+    VSkeletonLoader,
+    WinrateGraph
+
+  },
+  data: () => ({
+    Tiers : ['iron','bronze','silver','gold','platinum','diamond'],
+    rowHeight : 0,
+    td1Height: 0,
+      }),
+  computed:{
+    getRandomInt(){
+      return Math.floor(Math.random() * 100);
+    },
+    tierRandom(){
+      return Math.floor(Math.random()*6);
+    }
+  },
+  methods :{
+    onWidthChange(newWidth) {
+      console.log("row:",newWidth)
+      this.rowHeight = newWidth;
+    },
+    onWidthChange1(newWidth) {
+      console.log("td1:",newWidth)
+      this.td1Height = newWidth;
+    },
+   generateHexColor(scaleValue) {
+  // Interpolate RGB values based on the scale
+  var red, green, blue;
+
+  if (scaleValue < 50) {
+    // Interpolate from red to orange
+    red = Math.round((100 - scaleValue * 2) * 255 / 100);
+    green = Math.round(scaleValue * 2 * 255 / 100);
+    blue = 0;
+  } else {
+    // Interpolate from orange to blue
+    red = 0;
+    green = Math.round((150 - (scaleValue - 50) * 2) * 255 / 100);
+    blue = Math.round(((scaleValue - 50) * 2 * 255 / 100));
+  }
+
+  // Convert RGB values to hexadecimal
+  var hex = ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
+
+  return '#' + hex;
+},
+  getTier(tier){
+    return tier.split(' ')[0];
+  },
+
+},
+  props:{
+    summoners:
+    {
+      type : Array,
+      required : true,
+    },
+  },
+  updated(){
+  const element = document.getElementById('row');
+  const element1 = document.getElementById('td1');  
+// Create a ResizeObserver to monitor width changes
+const observer = new ResizeObserver(entries => {
+  for (const entry of entries) {
+    const newWidth = entry.contentRect.width;
+
+    // Call a method or update a data property with the new width
+    if(entry.target.id == 'row')
+    this.onWidthChange(newWidth);
+    else
+    this.onWidthChange1(newWidth);
+  }
+});
+
+// Start observing the element
+observer.observe(element);
+observer.observe(element1)
+
+  }    
+  }
+</script>
 <style scoped>
 .bg-db{
   background: #2f2f4d;
@@ -204,91 +293,6 @@ td{
     -moz-filter: blur(4px);
     -o-filter: blur(4px);
     -ms-filter: blur(4px);
+    filter: blur(4px);
 }
 </style>
-
-<script>
-import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
-export default{
-  name: 'HelloWorld',
-  components:{
-    VSkeletonLoader
-  },
-  data: () => ({
-    Tiers : ['iron','bronze','silver','gold','platinum','diamond'],
-    rowHeight : 0,
-    td1Height: 0,
-      }),
-  computed:{
-    getRandomInt(){
-      return Math.floor(Math.random() * 100);
-    },
-    tierRandom(){
-      return Math.floor(Math.random()*6);
-    }
-  },
-  methods :{
-    onWidthChange(newWidth) {
-      console.log("row:",newWidth)
-      this.rowHeight = newWidth;
-    },
-    onWidthChange1(newWidth) {
-      console.log("td1:",newWidth)
-      this.td1Height = newWidth;
-    },
-   generateHexColor(scaleValue) {
-  // Interpolate RGB values based on the scale
-  var red, green, blue;
-
-  if (scaleValue < 50) {
-    // Interpolate from red to orange
-    red = Math.round((100 - scaleValue * 2) * 255 / 100);
-    green = Math.round(scaleValue * 2 * 255 / 100);
-    blue = 0;
-  } else {
-    // Interpolate from orange to blue
-    red = 0;
-    green = Math.round((150 - (scaleValue - 50) * 2) * 255 / 100);
-    blue = Math.round(((scaleValue - 50) * 2 * 255 / 100));
-  }
-
-  // Convert RGB values to hexadecimal
-  var hex = ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
-
-  return '#' + hex;
-},
-  getTier(tier){
-    return tier.split(' ')[0];
-  },
-
-},
-  props:{
-    summoners:
-    {
-      type : Array,
-      required : true,
-    },
-  },
-  updated(){
-  const element = document.getElementById('row');
-  const element1 = document.getElementById('td1');  
-// Create a ResizeObserver to monitor width changes
-const observer = new ResizeObserver(entries => {
-  for (const entry of entries) {
-    const newWidth = entry.contentRect.width;
-
-    // Call a method or update a data property with the new width
-    if(entry.target.id == 'row')
-    this.onWidthChange(newWidth);
-    else
-    this.onWidthChange1(newWidth);
-  }
-});
-
-// Start observing the element
-observer.observe(element);
-observer.observe(element1)
-
-  }    
-  }
-</script>
