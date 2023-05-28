@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file\
 api_url = str(os.getenv('API_URL'))
+summoner_update_interval = str(os.getenv('UPDATE_SUMMONERS_EVERY'))
 
 
 def fetch_summoners():
@@ -56,8 +57,7 @@ def update_all_summoners():
         update_summoner(player['id'], data)
 
 
-# Update all summoners every 30mins
-schedule.every(30).minutes.do(update_all_summoners)
+schedule.every(summoner_update_interval).minutes.do(update_all_summoners)
 
 # Loop so that the scheduling task
 # keeps on running all time.
