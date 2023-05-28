@@ -94,8 +94,11 @@ def update_all_summoners():
         data = opgg_stats_worker.run(player['summoner'])
         # update the data in the db
         update_summoner(player['id'], data)
-
-        games = opgg_history_worker.run(player['summoner_id'],)
+        last_fetched_game_id = players.get('last_fetched_game', None)
+        if last_fetched_game_id:
+            games = opgg_history_worker.run(player['summoner_id'], details['start_date'], details['end_date'], last_fetched_game_id)
+        else:
+            games = opgg_history_worker.run(player['summoner_id'], details['start_date'], details['end_date'])
 
         print(f"{len(games)} games found for player {player['summoner']}")
         update_match_history(player['id'], games)
