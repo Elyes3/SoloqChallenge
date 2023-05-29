@@ -2,7 +2,7 @@
     <div class="pa-5">
         <div  class="d-flex justify-start items-center flex-column">
             <h1 class="text-center">Rules</h1>
-            <div class="pa-10 bg-lblue rounded-full shadow-1 font-weight-bold text-white">
+            <div class="pa-10 bg-lblue rounded-full shadow-1 text-white">
                 <p>
                     SoloQChallenge Rules:<br>
                     - The challenge will most likely start in the middle of July.<br>
