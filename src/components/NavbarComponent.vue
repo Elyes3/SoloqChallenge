@@ -1,10 +1,11 @@
 <template>
   
       <v-toolbar color="#0A0820">
-        <img src="logo.png" width="30" height="30" class="ml-3">
-  
-        <v-toolbar-title app class="text-lb font-weight-bold">SoloQ Challenge</v-toolbar-title>
-  
+        <router-link to="/" class="text-decoration-none">
+          <div class="d-flex">
+              <img src="logo.svg" width="60" height="60" class="ml-3 mr-2">
+          </div>
+      </router-link>
         <!-- Navbar content here -->
   
         <v-spacer></v-spacer>
