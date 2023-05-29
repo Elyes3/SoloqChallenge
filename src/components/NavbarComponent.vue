@@ -8,7 +8,7 @@
         <!-- Navbar content here -->
   
         <v-spacer></v-spacer>
-  
+        <router-link to="/rules" class="text-decoration-none mr-4">Rules</router-link>
         <v-icon icon="mdi-theme-light-dark" class="me-5 text-white"></v-icon>
       </v-toolbar>
   </template>

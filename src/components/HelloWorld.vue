@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height>
-    <div class=" rounded-full shadow-1" v-if="summoners.length > 0">
+    <div class="rounded-full shadow-1" v-if="summoners.length > 0">
     
       <v-table class="bg-db">
 
@@ -71,10 +71,10 @@
         </td>
         <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
           <div :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-white font-weight-bold text-center'">{{summoner && summoner.lp ? summoner.lp : 0 }}&nbsp;LP 
-          <div class="d-flex justify-center items-center g-3" v-if="summoner && summoner.series"> 
-            <span v-for="(serie,id) in summoner.series" :key="id" :class="(serie == 'W' ? 'blue-bg' : 'red-bg') + '  rounded-full wh-10 d-inline-block'">
-            </span>       
-            <span></span>
+          <div class="d-flex justify-center items-center g-3" v-if="summoner && summoner.series">
+            <span :class="(summoner.series.lose == 1 && summoner.series.win == 1 ? 'blue-bg' : summoner.series.win == 1 ? 'blue-bg' : summoner.series.lose == 1 ? 'red-bg' : 'bg-white') + ' rounded-full wh-10 d-inline-block'"></span>
+            <span :class="(summoner.series.lose == 1 && summoner.series.win == 1 ? 'red-bg' : 'bg-white') + ' rounded-full wh-10 d-inline-block'"></span>    
+            <span class="bg-white rounded-full wh-10 d-inline-block"></span>
           </div>
         </div>
         </td>
@@ -118,14 +118,6 @@ export default{
       console.log("row:",newWidth)
       this.rowHeight = newWidth;
     },
-    toolTipColorChange(){
-      const collection = document.getElementsByClassName('v-overlay__content');
-      console.log(collection);
-      for (let i = 0; i < collection.length; i++) {
-        collection[i].setAttribute('style','background : #181936')
-        console.log(collection[i]);
-    }
-    },
     onWidthChange1(newWidth) {
       console.log("td1:",newWidth)
       this.td1Height = newWidth;
@@ -164,11 +156,11 @@ export default{
     },
   },
   updated(){
-  this.toolTipColorChange();
   const element = document.getElementById('row');
   const element1 = document.getElementById('td1');  
 // Create a ResizeObserver to monitor width changes
 const observer = new ResizeObserver(entries => {
+  window.requestAnimationFrame(() =>{
   for (const entry of entries) {
     const newWidth = entry.contentRect.width;
 
@@ -178,6 +170,7 @@ const observer = new ResizeObserver(entries => {
     else
     this.onWidthChange1(newWidth);
   }
+})
 });
 
 // Start observing the element
