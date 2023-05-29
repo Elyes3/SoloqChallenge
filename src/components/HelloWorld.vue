@@ -65,8 +65,23 @@
         </div>
       </td>
         <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
-          <div :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-white font-weight-bold d-flex justify-center align-center'">
-            <img v-if="summoner && summoner.tier" :src="summoner.tier_image_url" class="tier" width="40" height="40"><img v-else class="tier" width="40" height="40" :src='`https://opgg-static.akamaized.net/images/medals_new/`+Tiers[tierRandom]+".png"'>&nbsp; {{ summoner && summoner.tier ? summoner.tier : Tiers[tierRandom].toUpperCase()  }}&nbsp;{{ summoner && summoner.tier ?  summoner.division : Math.floor(Math.random() * 4) + 1 }}
+          <div :class="(summoner.status === 'PENDING' ? 'blureffect' : '') + ' text-white font-weight-bold d-flex align-center'">
+            <v-row no-gutters>
+            <v-col cols="6">
+              <div class="d-flex align-center justify-end">
+                
+              <img v-if="summoner && summoner.tier" :src="summoner.tier_image_url" class="tier" width="40" height="40"><img v-else class="tier" width="40" height="40" :src='`https://opgg-static.akamaized.net/images/medals_new/`+Tiers[tierRandom]+".png"'>
+              </div>
+            </v-col>
+            <v-col cols="6" class="d-flex">
+            <div class="d-flex align-center justify-start ml-2">
+            <p>
+            {{ summoner && summoner.tier ? summoner.tier : Tiers[tierRandom].toUpperCase()  }}&nbsp;
+            {{ summoner && summoner.tier ?  summoner.division : Math.floor(Math.random() * 4) + 1 }}
+            </p>
+            </div>
+            </v-col>
+            </v-row>
           </div>
         </td>
         <td :class="summoner && summoner.status === 'PENDING' ? 'pending' : ''">
