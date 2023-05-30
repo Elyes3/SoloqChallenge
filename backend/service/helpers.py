@@ -1,3 +1,22 @@
+from bson import ObjectId
+
+
+def find_or_create_by_champid(dict_array, champid):
+    for item in dict_array:
+        if item.get('id') == champid:
+            return item
+    new_dict = {'id': champid,
+                'games': 0,
+                'win': 0,
+                'lose': 0,
+                'kill': 0,
+                'death': 0,
+                'assist': 0,
+                }
+    dict_array.append(new_dict)
+    return new_dict
+
+
 def recalculate_stats(db, summoner_id):
     collection = db['matches']
     matches = collection.find({'summoner_id': summoner_id})
@@ -36,6 +55,8 @@ def recalculate_stats(db, summoner_id):
         'ace': 0,
         'avg_game_rank': 0,
         'total_game_rank': 0,
+         #game_length
+         #avg_game_length
     }
 
     for match in matches:
@@ -46,7 +67,7 @@ def recalculate_stats(db, summoner_id):
             stats['games_blue_side'] = stats['games_blue_side'] + 1
         # COUNTED EVEN IN REMAKES
 
-        if match['is_remake'] == 'true':
+        if match['is_remake'] == True:
             stats['remake'] = stats['remake'] + 1
             continue
 
@@ -67,7 +88,9 @@ def recalculate_stats(db, summoner_id):
         stats['assist'] = stats['assist'] + match['kda']['a']
         stats['avg_assist'] = stats['assist'] / stats['games']
         # kda
-        stats['avg_kda'] = (stats['kill'] + stats['assist']) / stats['death']
+        stats['avg_kda'] = -1
+        if stats['death'] > 0:
+            stats['avg_kda'] = (stats['kill'] + stats['assist']) / stats['death']
         # creep score
         stats['cs'] = stats['cs'] + match['stats']['minion_kill']
         stats['avg_cs'] = stats['cs'] / stats['games']
@@ -95,6 +118,26 @@ def recalculate_stats(db, summoner_id):
             stats['mvp'] = stats['mvp'] + 1
         if match['team_mvp'] == 'true':
             stats['ace'] = stats['ace'] + 1
+        if not stats.get('champion_stats', None):
+            stats['champion_stats'] = []
+        champ_stats = find_or_create_by_champid(stats['champion_stats'], match['champion'])
+        champ_stats['games'] = champ_stats['games'] + 1
+        if match['result'] == 'LOSE':
+            champ_stats['lose'] = champ_stats['lose'] + 1
+        else:
+            champ_stats['win'] = champ_stats['win'] + 1
+        champ_stats['kill'] = champ_stats['kill'] + match['kda']['k']
+        champ_stats['death'] = champ_stats['death'] + match['kda']['d']
+        champ_stats['assist'] = champ_stats['assist'] + match['kda']['a']
         # NOT COUNTED EVEN IN REMAKES!
     return stats
 
+
+def calculate_top_champs(db, summoner_id):
+    collection = db['stats']
+    summoner = collection.find_one({'summoner_id': summoner_id})
+    if not summoner:
+        return
+    champion_stats = summoner.get('champion_stats', [])
+    sorted_array = sorted(champion_stats, key=lambda x: x['games'], reverse=True)
+    db['summoners'].update_one({'_id': ObjectId(summoner_id)}, {'$set': {'top_champions': sorted_array[:3]}})

@@ -167,6 +167,7 @@ def post_matches(summoner_id):
     payload = request.json
     payload.reverse()
     try:
+        filtered_matches = []
         for match in payload:
             exists = collection.find_one({'id': match['id']})
             if exists:
@@ -178,9 +179,13 @@ def post_matches(summoner_id):
                     'last_fetched_game_played_at': match['created_at'],
                 }})
             match['summoner_id'] = summoner_id
-            collection.insert_one(match)
-            stats = recalculate_stats(db, summoner_id)
+            filtered_matches.append(match)
+        if len(filtered_matches) > 0:
+            collection.insert_many(filtered_matches)
+            stats = helpers.recalculate_stats(db, summoner_id)
             db['stats'].update_one({'summoner_id': summoner_id}, {'$set': stats}, upsert=True)
+            helpers.calculate_top_champs(db, summoner_id)
     except Exception as e:
+        e.with_traceback()
         return "Error", 500
     return "Inserted", 200

@@ -50,26 +50,28 @@ def filter_games_by_date(data, start_date, end_date):
 
 
 def run(summoner_id, start_at, end_at, last_registered_game=None):
-    headers = {
-        'User-Agent': 'Chrome v22.2 Linux Ubuntu',
-        'Accept': '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'X-Requested-With': 'XMLHttpRequest'
-    }
-    page = f'https://op.gg/api/v1.0/internal/bypass/games/euw/summoners/{summoner_id}?&limit=20&hl=en_US&game_type' \
-           f'=soloranked'
-    res = requests.Session().get(url=page, headers=headers)
-    res.raise_for_status()
-    res_json = res.json()
+    try:
+        headers = {
+            'User-Agent': 'Chrome v22.2 Linux Ubuntu',
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+        page = f'https://op.gg/api/v1.0/internal/bypass/games/euw/summoners/{summoner_id}?&limit=20&hl=en_US&game_type'\
+               f'=soloranked'
+        res = requests.Session().get(url=page, headers=headers)
+        res.raise_for_status()
+        res_json = res.json()
 
-    games = parse_data(res_json)
+        games = parse_data(res_json)
 
-    if last_registered_game is not None:
-        games = only_games_after_id(games, last_registered_game)
-    games = filter_games_by_date(games, start_at, end_at)
-
-    return games
+        if last_registered_game is not None:
+            games = only_games_after_id(games, last_registered_game)
+        games = filter_games_by_date(games, start_at, end_at)
+        return games
+    except Exception:
+        return []
 
 
 if __name__ == '__main__':
