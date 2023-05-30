@@ -1,6 +1,8 @@
 <template>
-      <CardComponent :text="text"></CardComponent>
+    <div class="mt-16">
+    <CardComponent :text="text"></CardComponent>
     <HelloWorld :summoners="$store.getters.getSummoners"/>
+   </div>
 </template>
 
 <script>

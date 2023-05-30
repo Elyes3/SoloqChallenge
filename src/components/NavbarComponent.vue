@@ -1,14 +1,13 @@
 <template>
   
-      <v-toolbar color="#0A0820">
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar color="#0A0820" class="position-fixed z-index-9999">
+        <v-app-bar-nav-icon v-if="this.$route.name === 'Graph'" variant="text" @click.stop="setDrawer"></v-app-bar-nav-icon>
         <router-link to="/" class="text-decoration-none">
           <div class="d-flex">
               <img src="logo.svg" width="60" height="60" class="ml-3 mr-2">
           </div>
-      </router-link>
+        </router-link>
         <!-- Navbar content here -->
-  
         <v-spacer></v-spacer>
         <router-link to="/rules" class="text-decoration-none mr-4">Rules</router-link>
         <router-link to="/graphs" class="text-decoration-none mr-4">Graphs</router-link>
@@ -19,5 +18,17 @@
 .text-lb{
   color:#70d4dc;
 }
+.z-index-9999{
+  z-index:9999
+}
 </style>
+<script>
+export default{
+  methods:{
+    setDrawer(){
+      this.$store.commit('setDrawer');
+    }
+  }
+}
+</script>
   

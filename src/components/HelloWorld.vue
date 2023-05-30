@@ -101,7 +101,21 @@
 <div v-else class="w-100">
   <v-skeleton-loader color="#2f2f4d" :elevation="24"></v-skeleton-loader>
 </div>
-<WinrateGraph></WinrateGraph>
+<div class="bg-db mt-5 pa-3 rounded-full shadow-1">
+    <div class="pa-5 d-flex justify-bet w-100 align-center">
+      <div class="d-flex flex-column text-left">
+      <h1 class="text-white">Winrate Graph</h1>
+      <p>Add/Remove player's graph by clicking on his name</p>
+      </div>
+      <div>
+        <v-btn-toggle rounded="xl" color="red" v-model="filterBy">
+      <v-btn icon="mdi-gamepad" value="game" :class="filterBy == 'game' ? 'bg-blue' : 'bg-ddb'" @click="()=>{this.filterBy = 'game'}"></v-btn>
+      <v-btn icon="mdi-clock" value="time" :class="filterBy == 'time' ? 'bg-blue' : 'bg-ddb'" @click="() => {this.filterBy = 'time'}"></v-btn>
+    </v-btn-toggle>
+      </div>
+    </div>
+<WinrateGraph :data="data" :options="options" component="Line"></WinrateGraph>
+</div>
 </v-container>
 
 </template>
@@ -119,6 +133,104 @@ export default{
     Tiers : ['iron','bronze','silver','gold','platinum','diamond'],
     rowHeight : 0,
     td1Height: 0,
+    filterBy: 'game',
+    data:{
+
+labels: ['0 Games','10 Games', '20 Games', '30 Games', '40 Games', '50 Games', '60 Games', '70 Games','80 Games'],
+datasets: [
+  {
+    label: 'Romex Fortrex',
+    backgroundColor: '#008080',
+    data: [0,40, 66, 80, 90, 75, 80, 82,85],
+  },
+  {
+    label: 'Ghosτ',
+    backgroundColor: '#48BCD1',
+    data: [0,85, 80, 90, 75, 80, 70, 65,60],
+  },
+  {
+    label: 'OBG Thanagor',
+    backgroundColor: '#333333',
+    data: [0,90,82,76,81,72,67,71,75],
+  },
+  {
+    label: 'OBG BotGapped',
+    backgroundColor: '#32CD30',
+    data: [0,75,90,81,85,87,89,91,80,90],
+  },
+  {
+    label: 'Aikatsuyuri',
+    backgroundColor: 'red',
+    data: [0,60,70,65,50,60,63,70,68,73],
+  },
+  {
+    label: 'Ekkonomics',
+    backgroundColor: 'pink',
+    data: [0,20,35,40,45,50,55,60,70],
+  },
+],
+},
+options :
+{
+responsive: true,
+maintainAspectRatio: false,
+elements:{
+  line:{
+  borderColor :'white',
+  }
+},
+scales: {
+      y: {
+        ticks: {
+          color: 'white',
+          font : {
+            family : 'MarkPro',
+            weight : 'bold'
+          }
+        },
+        title: {
+          display: true,
+          color : 'white',
+          text: 'Winrate',
+          font: {
+            family: 'MarkPro',
+            size: 14,
+            weight: 'bold'
+          }
+          },
+      },
+      x:{
+        ticks : {
+          color :'white',
+          font : {
+            family : 'MarkPro',
+            weight : 'bold'
+          },
+        },
+        title: {
+          display: true,
+          color : 'white',
+          text: 'Number of games',
+          font: {
+            family: 'MarkPro',
+            size: 14,
+            weight: 'bold'
+          }
+          },
+      }
+    },
+plugins: {
+      legend: {
+        labels: {
+          color: 'white', // Set the text color
+          font : {
+            family : 'MarkPro',
+            weight : 'bold'
+          }
+        },
+      },
+    },
+}
       }),
   computed:{
     getRandomInt(){
@@ -137,26 +249,28 @@ export default{
       console.log("td1:",newWidth)
       this.td1Height = newWidth;
     },
-   generateHexColor(scaleValue) {
-  // Interpolate RGB values based on the scale
-  var red, green, blue;
-
-  if (scaleValue < 50) {
-    // Interpolate from red to orange
-    red = Math.round((100 - scaleValue * 2) * 255 / 100);
-    green = Math.round(scaleValue * 2 * 255 / 100);
-    blue = 0;
-  } else {
-    // Interpolate from orange to blue
-    red = 0;
-    green = Math.round((150 - (scaleValue - 50) * 2) * 255 / 100);
-    blue = Math.round(((scaleValue - 50) * 2 * 255 / 100));
+  generateHexColor(scaleValue) {
+  if (scaleValue < 45 ){
+    return '#610101'
   }
-
-  // Convert RGB values to hexadecimal
-  var hex = ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
-
-  return '#' + hex;
+  else if (scaleValue < 50)
+  {
+    return '#6b6b6b'
+  }
+  else if(scaleValue<60){
+    return '#00BBA3';
+  }
+  else if (scaleValue<70){
+    return '#0093FF'
+  }
+  else if (scaleValue<80)
+  {
+    return '#FF8200'
+  }
+  else
+  {
+    return '#FFD700'
+  }
 },
   getTier(tier){
     return tier.split(' ')[0];
@@ -199,7 +313,9 @@ observer.observe(element1)
 .bg-db{
   background: #2f2f4d;
 }
-
+.bg-ddb{
+  background:#151530;
+}
 @media only screen and (max-width: 1280px) {
     * {
     font-size:0.65rem;
@@ -326,4 +442,23 @@ td{
 .hv-bl:hover{
 color:#2196F3;
 }
+
+    .he-100{
+      height:50rem;
+    }
+    .rounded-100{
+  border-radius : 10px;
+  }
+  .rounded-full{
+    border-radius:25px;
+  }
+  .justify-bet{
+    justify-content:space-between }
+  .shadow-1{
+    box-shadow: 0px 0px 10px 0px black;
+    border-radius:20px;
+}
+@font-face { 
+  font-family: MarkPro; 
+	src: url('../../public/MarkPro.otf'); } 
 </style>
