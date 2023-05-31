@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-5">
+    <div class="pa-5 mt-16">
         <div  class="d-flex justify-start items-center flex-column">
             <h1 class="text-center">Rules</h1>
             <div class="pa-10 bg-lblue rounded-full shadow-1 text-white">

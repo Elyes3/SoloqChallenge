@@ -9,7 +9,7 @@
             <h1>Graph</h1>
             <v-select
                 label="Select"
-                :items="['Multikills', 'Elo','CS','Performance','Vision','Damage']"
+                :items="['Multikills', 'Elo','CS','Performance','Vision','Damage','KDA']"
                 v-model="selected"
                 @update:modelValue="emitNewData(selected)">
             </v-select>
@@ -73,6 +73,11 @@
                             {id: 1,label: 'To Champions',selected: true},
                             {id: 2,label: 'To Objectives',selected: false}
                         ],
+                KDA:[       { id: 1, label: 'Kills', selected: true },
+                            { id: 2, label: 'Deaths', selected: false },
+                            { id: 3, label: 'Assists', selected: false },
+                        ],
+
                 CS : [{id: 1,label:'CS',selected : true}],
                 Elo : [{id : 1,label : 'Elo',selected : true}]
 
@@ -83,7 +88,6 @@
         emitNewData(value){
             this.$emit('newData',value)
             this.$emit('newCheck',this.items[value]);
-            console.log('emitted')  
         },
     },
 

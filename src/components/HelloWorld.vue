@@ -242,11 +242,9 @@ plugins: {
   },
   methods :{
     onWidthChange(newWidth) {
-      console.log("row:",newWidth)
       this.rowHeight = newWidth;
     },
     onWidthChange1(newWidth) {
-      console.log("td1:",newWidth)
       this.td1Height = newWidth;
     },
   generateHexColor(scaleValue) {

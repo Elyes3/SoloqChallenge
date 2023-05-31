@@ -2,7 +2,7 @@
     <div>
         <v-card>
         <v-layout>
-            <Sidebar  @newData="value => {this.text=value;this.data.datasets = []}" @newCheck="value =>setData(value)"  class="mt-16" :drawer="this.$store.getters.getDrawer"></Sidebar>
+            <Sidebar  @newData="setSelect" @newCheck="setData"  class="mt-16" :drawer="this.$store.getters.getDrawer"></Sidebar>
             <v-main style="min-height:100vh;background:#181936">
               <div>
                 <div class=" bg-db rounded-100 mt-5 text-white he-100 bg-lblue mt-16">
@@ -54,9 +54,18 @@ export default {
       }
     },
     methods:{
+       setSelect(value){
+        this.text=value;
+        if(this.text == 'Elo')
+          this.optionsLine.scales.x.title.text = 'Number of games';
+        else
+          this.options.scales.x.title.text = 'Players';
+        this.options.scales.y.title.text = this.text;
+        this.optionsLine.scales.y.title.text = this.text;
+        this.data.datasets = [];
+       },
        setData(value){
         this.value = value.filter(val => val.selected == true).length;
-        
         if (value.length > 0 && value.length < 5){
           value.forEach(val => {
             if (val.selected == true){
@@ -75,7 +84,6 @@ export default {
           }
             else if (val.selected == false)
             { 
-            console.log(val.id)
               this.data.datasets = this.data.datasets.filter(dataset =>
                 dataset.label !=  val.label)
             }
@@ -197,7 +205,7 @@ scales: {
         title: {
           display: true,
           color : 'white',
-          text: 'Winrate',
+          text: 'Multikills',
           font: {
             family: 'MarkPro',
             size: 14,
@@ -216,14 +224,36 @@ scales: {
         title: {
           display: true,
           color : 'white',
-          text: 'Number of games',
+          text: 'Players',
           font: {
             family: 'MarkPro',
             size: 14,
             weight: 'bold'
           }
           },
-      }
+      },
+    },
+    plugins:{
+      tooltip: {
+        titleFont:{
+          weight:'bold',
+          family:'MarkPro'
+        },
+        bodyFont:{
+          weight:'bold',
+          family:'MarkPro'
+        },
+
+      },
+      legend: {
+        labels: {
+          color: 'white', // Set the text color
+          font : {
+            family : 'MarkPro',
+            weight : 'bold'
+          }
+        },
+      },
     },
 },
 optionsLine :
@@ -282,6 +312,33 @@ scales: {
           }
           },
       }
+    },
+    plugins:{
+      tooltip: {
+        callbacks:{
+          label: tooltipItem => {
+                    return tooltipItem.dataset.label + " : " + this.yLabels[parseInt(tooltipItem.raw)];
+          }
+        },
+        titleFont:{
+          weight:'bold',
+          family:'MarkPro'
+        },
+        bodyFont:{
+          weight:'bold',
+          family:'MarkPro'
+        },
+        
+      },
+      legend: {
+        labels: {
+          color: 'white', // Set the text color
+          font : {
+            family : 'MarkPro',
+            weight : 'bold'
+          }
+        },
+      },
     },
 }
         }

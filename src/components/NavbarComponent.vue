@@ -9,8 +9,9 @@
         </router-link>
         <!-- Navbar content here -->
         <v-spacer></v-spacer>
-        <router-link to="/rules" class="text-decoration-none mr-4">Rules</router-link>
         <router-link to="/graphs" class="text-decoration-none mr-4">Graphs</router-link>
+        <router-link to="/history" class="text-decoration-none mr-4">History</router-link>
+        <router-link to="/rules" class="text-decoration-none mr-4">Rules</router-link>
         <v-icon icon="mdi-theme-light-dark" class="me-5 text-white"></v-icon>
       </v-toolbar>
   </template>

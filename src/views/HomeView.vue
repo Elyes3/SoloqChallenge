@@ -1,7 +1,7 @@
 <template>
     <div class="mt-16">
     <CardComponent :text="text"></CardComponent>
-    <HelloWorld :summoners="$store.getters.getSummoners"/>
+    <HelloWorld :summoners="summoners"/>
    </div>
 </template>
 
@@ -19,6 +19,12 @@ export default defineComponent({
       title : "SoloQ Challenge",
       p : "Tunisian players join an infernal fight in a soloQ climb full of surprises ! Check the ladder for more !"
     },
+    }
+  },
+  props:{
+    summoners:{
+      required : true,
+      type : Array,
     }
   },
   components: {

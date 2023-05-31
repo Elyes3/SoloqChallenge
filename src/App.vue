@@ -2,7 +2,7 @@
 <template>
   <v-app class="min-h-100">
     <NavbarComponent></NavbarComponent>
-    <router-view></router-view>
+    <router-view :summoners="getSummoners"></router-view>
   </v-app>
 </template>
 
