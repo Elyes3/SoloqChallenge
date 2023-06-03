@@ -135,6 +135,12 @@ def update_summoner(oid):
     object_id = ObjectId(oid)
     payload = request.json
     try:
+        collection = db['summoners']
+
+        # Fetch documents from the collection
+        doc = collection.find_one({'_id': object_id})
+        #  trigger new event if tier or division changed
+        #  add new historical data if lp changed
         update_query = {'$set': {'tier': payload.get('tier', ''),
                                  'icon_url': payload.get('icon_url', ''),
                                  'level': payload.get('level', 0),

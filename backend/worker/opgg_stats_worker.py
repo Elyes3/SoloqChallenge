@@ -26,9 +26,12 @@ def run(arg):
             'icon_url': data['profile_image_url'],
             'level': data['level'],
             'summoner_id': data['summoner_id'],
+            'tier': '',
+            'division': 'UNRANKED',
+            'lp': 0,
         }
 
-        for queue in data['league_stats']:
+        for queue in data.get('league_stats', []):
             if queue['queue_info']['game_type'] == 'SOLORANKED':
                 output['tier'] = queue['tier_info']['tier']
                 output['division'] = queue['tier_info']['division']
